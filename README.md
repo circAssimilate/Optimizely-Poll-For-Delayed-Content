@@ -1,11 +1,12 @@
-#OPTIMIZELY POLL FOR DELAYED CONTENT:#
+#OPTIMIZELY POLL FOR DELAYED CONTENT:
 
 The pollForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.  
 It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
 The function allows for a an "options" element, to allow for more flexibility as well.
 Feel free to file a ticket at optimizely.com/support with any feedback or questions - as the comments on this page will not be responded to.
 
-##SIMPLE USAGE EXAMPLE:## this does not use the optional options object to specify selectorToHide, timeoutInSeconds, or intervalInMilliseconds, causing them to default to hide the no timeout and 50 milliseconds.
+##SIMPLE USAGE EXAMPLE:
+######This does not use the optional options object to specify selectorToHide, timeoutInSeconds, or intervalInMilliseconds, causing them to default to hide the no timeout and 50 milliseconds.
 
 ```
 /* _optimizely_evaluate=force */
@@ -16,8 +17,8 @@ window.pollForDelayedContent("body > h1.header-image", function() {
 /* _optimizely_evaluate=safe */
 ```
 
-##ADVANCED USAGE EXAMPLE:## this uses the optional options object to specify selectorToHide, unhideDelayInMilliseconds, timeoutInSeconds, or intervalInMilliseconds. This will hide any .header-image elements until "body > h1.header-image" is added to the page - afterwords unhiding .header-image elements in 500 milliseconds.
-It will also set the timeout to 3 seconds and set polling to 100 milliseconds.
+##ADVANCED USAGE EXAMPLE:
+######This uses the optional options object to specify selectorToHide, unhideDelayInMilliseconds, timeoutInSeconds, or intervalInMilliseconds. This will hide any .header-image elements until "body > h1.header-image" is added to the page - afterwords unhiding .header-image elements in 500 milliseconds. It will also set the timeout to 3 seconds and set polling to 100 milliseconds.
 
 ```
 /* _optimizely_evaluate=force */
@@ -33,7 +34,7 @@ window.pollForDelayedContent("body > h1.header-image", function() {
 /* _optimizely_evaluate=safe */
 ```
 
-##PARAMETER CONTEXT:##
+##PARAMETER CONTEXT:
 
 @param {String} selectorToChange - The single element you want to change and hide *
 @param {Function} changeFn - The code, passed in through a funtion that you want to run when the "selector" is found - (e.g. function(){$("body > h1.header-image").html("New Header"); $("body > h1.header-image").css("color", "#0081ba");})
@@ -43,7 +44,8 @@ window.pollForDelayedContent("body > h1.header-image", function() {
 @param {Integer} options.timeoutInSeconds - (optional) Time in seconds this function will take to "timeout" or stop trying. If this argument is not specified, the interval will not timeout - (e.g. 2)
 @param {Integer} options.intervalInMilliseconds - (optional) Time in milliseconds between interval polls for "selector". If this argument is not specified, the interval poll will be set up 50 milliseconds - (e.g. 100)
 
-##IMPLEMENTATION INSTRUCTIONS: Add minified code below via these instructions.##
+##IMPLEMENTATION INSTRUCTIONS:
+######Add minified code below via these instructions.##
 
 The minified code can either be added to Experiment JS or Project JS (for Enterprise subscriptions).
 If you place it in Experiment JS, you must add the pollForDelayedContent() function definition within the "_optimizely_evaluate=force" comments
