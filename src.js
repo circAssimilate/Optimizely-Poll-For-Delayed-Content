@@ -47,7 +47,7 @@
  */
 
 /*
- * IMPLEMENTATION INSTRUCTIONS: Add minified code below via these instructions.
+ * IMPLEMENTATION INSTRUCTIONS: Add minified code below via these instructions. (via http://jscompress.com/)
  *
  * The minified code can either be added to Experiment JS or Project JS (for Enterprise subscriptions).
  * If you place it in Experiment JS, you must add the pollForDelayedContent() function definition within the "_optimizely_evaluate=force" comments
@@ -61,13 +61,53 @@ window.pollForDelayedContent=function(e,n,t){var i=+new Date,o=50;t=t||{};var l=
 /* _optimizely_evaluate=safe */
 
 /*
- * CODE TEMPLATE - Replace the selectorToChange, changeFn, and options arguments as needed to correct content flashing within Optimizely experiments
+ * UNCOMPRESSED CODE - Using the minified code is recommended; but, please add via the instructions above.
  */
 
 /* _optimizely_evaluate=force */
-window.pollForDelayedContent("#selectorToChange", function() {
-  $("#selectorToChange").html("Changed Element");
-  $("#selectorToChange").css("color", "white");
+window.pollForDelayedContent = function(selectorToChange, changeFn, options) {
+  /* Default info for polling */
+  var START_TIME = (+new Date());
+  var DEFAULT_INTERVAL = 50;
+  options = options || {};
+  var selectorToHide = options.selectorToHide || selectorToChange;
+  var unhideDelay = options.unhideDelayInMilliseconds || 0;
+  var timeout = options.timeoutInSeconds * 1000 || null;
+  var interval = options.intervalInMilliseconds || DEFAULT_INTERVAL;
+  var hideContent = function(selector) {
+    var uniqueStyleID = "optlyHide_" + (+new Date());
+    $("head").prepend("<style id='" + uniqueStyleID + "' type='text/css'>"+ selector + " {visibility:hidden !important;}</style>");
+    return function() {
+      $("#" + uniqueStyleID).remove();
+    };
+  }
+  var unhideContent = hideContent(selectorToHide);
+  var changeContent = function() {
+    changeFn();
+    setTimeout(unhideContent, unhideDelay);
+  }
+  var pollForElement = function () {
+    var now = (+new Date());
+    if ($(selectorToChange).length) {
+      changeContent();
+    } else if (timeout && now - START_TIME > timeout) {
+      unhideContent();
+    } else {
+      setTimeout(pollForElement, interval);
+    }
+  }
+  pollForElement();
+};
+/* _optimizely_evaluate=safe */
+
+/*
+ * DEMO CODE - To see this function in action, copy from the "UNCOMPRESSED CODE" comment to the end of this file and paste it into the JavaScript Console while on any page with jQuery
+ */
+
+/* _optimizely_evaluate=force */
+window.pollForDelayedContent(".test", function() {
+  $(".test").html("Changed Element");
+  $(".test").css("color", "white");
 }, {
   selectorToHide : 'img',
   unhideDelayInMilliseconds: 500,
@@ -75,3 +115,8 @@ window.pollForDelayedContent("#selectorToChange", function() {
   intervalInMilliseconds : 100
 });
 /* _optimizely_evaluate=safe */
+
+$(".test").remove();
+setTimeout(function(){
+    $("body").prepend("<h1 class='test'>Original Element</h1>");
+},2000);

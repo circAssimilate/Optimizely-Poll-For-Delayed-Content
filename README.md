@@ -5,6 +5,9 @@ It will be able to be used as many times as it's needed within an experiment or 
 The function allows for a an "options" element, to allow for more flexibility as well.
 Feel free to file a ticket at optimizely.com/support with any feedback or questions - as the comments on this page will not be responded to.
 
+##CONTRIBUTING TO THIS REPOSITORY
+For parity, when contributing and changing the core "UNCOMPRESSED CODE", please compress via http://jscompress.com/ and replace the minified code.
+
 ##SIMPLE USAGE EXAMPLE:
 ######This does not use the optional options object to specify selectorToHide, timeoutInSeconds, or intervalInMilliseconds, causing them to default to hide the no timeout and 50 milliseconds.
 
