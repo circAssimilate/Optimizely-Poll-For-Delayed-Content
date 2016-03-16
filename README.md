@@ -1,5 +1,6 @@
 #OPTIMIZELY WAIT FOR DELAYED CONTENT
-###(V2 - src_v2.js):
+
+##V2 CODE (src_v2.js):
 
 ##USAGE EXAMPLE:
 While this code is in it's early stages, see bottom of [src_v2.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v2.js) for that.
@@ -22,8 +23,7 @@ The issues are listed directly within the src_v2.js comments. Feel free to branc
 ```
 
 ---
-#OPTIMIZELY POLL FOR DELAYED CONTENT
-###(V1 - src_v1.js):
+##V1 CODE (src_v1.js):
 
 The pollForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.  
 
