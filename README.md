@@ -1,4 +1,5 @@
-#OPTIMIZELY WAIT FOR DELAYED CONTENT (V2 - src_v2.js):
+#OPTIMIZELY WAIT FOR DELAYED CONTENT
+###(V2 - src_v2.js):
 
 ##USAGE EXAMPLE:
 While this code is in it's early stages, see bottom of [src_v2.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v2.js) for that.
@@ -19,8 +20,11 @@ The issues are listed directly within the src_v2.js comments. Feel free to branc
 @param {Boolean} options.repeat - (optional) When set to true, this code will continue to modify new page elements that match the selectorToChange paramter. This works best for browsers that support DOM Mutation Observers, but can also work with the recursive timeout polling.
 @param {String} options.customTagName - (optional) Will tag certain elements with this string for performance. If the repeat option is set to true, this will also be added to elements after changFn is ran on them, which prevents the code from being applied again. Only include alphanumeric characters, dashes and underscores in this string. If not provided, "optly-changed" will be used.
 ```
+
 ---
-#OPTIMIZELY POLL FOR DELAYED CONTENT (V1 - src_v1.js):
+#OPTIMIZELY POLL FOR DELAYED CONTENT
+###(V1 - src_v1.js):
+
 The pollForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.  
 
 It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
