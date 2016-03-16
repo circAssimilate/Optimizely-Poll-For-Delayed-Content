@@ -1,11 +1,19 @@
 #OPTIMIZELY WAIT FOR DELAYED CONTENT
 
-##V2 CODE (src_v2.js):
+The waitForDelayedContent() and pollForDelayedContent() helper functions are an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.  
+
+It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
+The function allows for a an "options" element, to allow for more flexibility as well.
+Feel free to file a ticket at optimizely.com/support with any feedback or questions - as the comments on this page will not be responded to.
+
+##V2 CODE ([src_v2.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v2.js)):
+By default, the code below will detect whether or not the browser allows for DOM Mutation Observers, and use that performance efficient way to hide and change page elements.
+If DOM Mutation Observers aren't available, the code will fallback to recursive timeout polling. This is less performant and uses a recursive JavaScript setTimeout().
 
 ##USAGE EXAMPLE:
 While this code is in it's early stages, see bottom of [src_v2.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v2.js) for that.
 
-##CONTRIBUTING TO THIS REPOSITORY
+##CONTRIBUTING TO THIS REPOSITORY:
 The issues are listed directly within the src_v2.js comments. Feel free to branch and edit as desired, updating those as you go.
 
 ##PARAMETER CONTEXT:
@@ -23,15 +31,12 @@ The issues are listed directly within the src_v2.js comments. Feel free to branc
 ```
 
 ---
-##V1 CODE (src_v1.js):
+---
 
-The pollForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.  
+##V1 CODE ([src_v1.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v1.js)):
+This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added. This code is in the process of being revamped as polling is less performant that DOM Mutation Observers.
 
-It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
-The function allows for a an "options" element, to allow for more flexibility as well.
-Feel free to file a ticket at optimizely.com/support with any feedback or questions - as the comments on this page will not be responded to.
-
-##CONTRIBUTING TO THIS REPOSITORY
+##CONTRIBUTING TO THIS REPOSITORY:
 For parity, when contributing and changing the core "UNCOMPRESSED CODE", please compress via http://jscompress.com/ and replace the minified code.
 
 ##SIMPLE USAGE EXAMPLE:

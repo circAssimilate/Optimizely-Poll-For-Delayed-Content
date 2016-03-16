@@ -1,10 +1,8 @@
 /**
- * OPTIMIZELY POLL FOR DELAYED CONTENT (V1):
+ * V1 CODE:
  *
- * The pollForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.
- * It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
- * The function allows for a an "options" element, to allow for more flexibility as well.
- * Feel free to file a ticket at optimizely.com/support with any feedback or questions - as the comments on this page will not be responded to.
+ * This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added.
+ * This code is in the process of being revamped as polling is less performant that DOM Mutation Observers.
  *
  * SIMPLE USAGE EXAMPLE: this does not use the optional options object to specify selectorToHide, timeoutInSeconds, or intervalInMilliseconds, causing them to default to hide the no timeout and 50 milliseconds.
  *
