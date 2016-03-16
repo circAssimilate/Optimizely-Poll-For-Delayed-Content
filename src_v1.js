@@ -1,5 +1,5 @@
 /**
- * OPTIMIZELY POLL FOR DELAYED CONTENT:
+ * OPTIMIZELY POLL FOR DELAYED CONTENT (V1):
  *
  * The pollForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.
  * It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
