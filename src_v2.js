@@ -1,15 +1,13 @@
 /**
- * OPTIMIZELY WAIT FOR DELAYED CONTENT (V2 - don't share with customers yet):
+ * V2 CODE:
  *
- * The waitForDelayedContent() helper function is an alternative solution to some of the approaches listed here: https://help.optimizely.com/hc/en-us/articles/200457495.
- * It will be able to be used as many times as it's needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
- * The function allows for a an "options" element, to allow for more flexibility as well.
- * Feel free to file a ticket at optimizely.com/support with any feedback or questions - as the comments on this page will not be responded to.
+ * This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added.
+ * This code is in the process of being revamped as polling is less performant that DOM Mutation Observers.
  *
  * DOM MUTATION OBSERVERS vs RECURSIVE TIMEOUT POLLING:
  *
  * By default, the code below will detect whether or not the browser allos for DOM Mutation Observers, and use that performance efficient way to hide and change page elements.
- * If DOM Mutation Oberservers aren't available, the code will fallback to recursive timeout polling. This is less performant and uses a recursive JavaScript setTimeout().
+ * If DOM Mutation Observers aren't available, the code will fallback to recursive timeout polling. This is less performant and uses a recursive JavaScript setTimeout().
  *
  * OPEN ISSUES:
  *
