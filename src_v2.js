@@ -33,9 +33,9 @@
  * IMPLEMENTATION INSTRUCTIONS: Minify and add code below via this link and instructions. (via http://jscompress.com/)
  *
  * The minified code can either be added to Experiment JS or Project JS (for Enterprise subscriptions).
- * If you place it in Experiment JS, you must add the pollForDelayedContent() function definition within the "_optimizely_evaluate=force" comments
- * You can then call the window.pollForDelayedContent() function as many times as neceesary within the experiment variation's "< edit code >" section.
- * The window.pollForDelayedContent() function in the "< edit code >" section must also be wrapped in the "_optimizely_evaluate=force" comments
+ * If you place it in Experiment JS, you must add the waitForDelayedContent() function definition within the "_optimizely_evaluate=force" comments
+ * You can then call the window.waitForDelayedContent() function as many times as neceesary within the experiment variation's "< edit code >" section.
+ * The window.waitForDelayedContent() function in the "< edit code >" section must also be wrapped in the "_optimizely_evaluate=force" comments
  * Optiverse info on "_optimizely_evaluate=force" comments - https://help.optimizely.com/hc/en-us/articles/200040185-Force-variation-code-or-Experiment-JavaScript-to-execute-immediately-when-Optimizely-loads
  */
 
