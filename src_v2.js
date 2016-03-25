@@ -30,6 +30,10 @@
  * @param {Integer} options.pollingIntervalInMilliseconds - (optional) Time in milliseconds between interval polls for "selector" when using the recursive timeout polling option. If this argument is not specified, the interval poll will be set up 50 milliseconds - (e.g. 100)
  * @param {String} options.method - (optional) If "POLL", recursive timeout polling will be used, overriding the default functionality. If not provided, the code will default to using DOM Mutation Observers if available in the browser and fallback on recursive timeout polling.
  *
+ * GLOBAL ABANDON FUNCTION:
+ *
+ * When called, the _waitForDelayedContent.stop() function will stop all instances of the waitForDelayedContent() function.
+ *
  * IMPLEMENTATION INSTRUCTIONS: Minify and add code below via this link and instructions. (via http://jscompress.com/)
  *
  * The minified code can either be added to Experiment JS or Project JS (for Enterprise subscriptions).
