@@ -142,14 +142,14 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
  */
 
 $(document).keydown(function(e) {
-  if(e.keyCode == 37) { // +
+  if(e.keyCode == 37) { // Left arrow
       $("#a h2").after("<p class='test'>.text ORIGINAL</p>")
-  } else if(e.keyCode == 39) { // +
+  } else if(e.keyCode == 39) { // Right arrow
       $("#a h2").after("<p id='test'>#test ORIGINAL</p>")
-  } else if(e.keyCode == 38) { // +
+  } else if(e.keyCode == 38) { // Up arrow
     $(".test:eq(0)").html(".text Don't Change")
     $("#b > h2").html("Don't Change")
-  } else if(e.keyCode == 40) { // +
+  } else if(e.keyCode == 40) { // Down arrow
     $("#test").html("#text Don't Change")
   }
 });
