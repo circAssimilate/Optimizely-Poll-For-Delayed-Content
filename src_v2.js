@@ -1,4 +1,13 @@
 /**
+  * Things to consider:
+  *
+  * 1. This code has been tested in a lot of scenarios and it seems to be working very well. It's worth testing in the wild after a bit more testing from others.
+  * 2. Given that intervalInMilliseconds is the one option that only applies to the polling version, I updated it to pollingIntervalInMilliseconds
+  * - Any better option names than pollingIntervalInMilliseconds?
+  * 3. Is it ok to use method in options.method? Wondering if it's a reserved word in JS
+ */
+
+/**
  * V2 CODE:
  *
  * This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added.
@@ -9,27 +18,19 @@
  * By default, the code below will detect whether or not the browser allos for DOM Mutation Observers, and use that performance efficient way to hide and change page elements.
  * If DOM Mutation Observers aren't available, the code will fallback to recursive timeout polling. This is less performant and uses a recursive JavaScript setTimeout().
  *
- * OPEN ISSUES:
- *
- * 1. Consider how .detach() iteracts with both versions below
- * 2. Consider if eval will work everywhere
- * 3. Consider adding START_TIME to the customTagName to allow removal when using waitForDelayedContent() multiple times
- * 4. Test test test for all the different use cases and any errors.
- *
  * PARAMETER CONTEXT:
  *
  * @param {String} selectorToChange - The single element you want to change and hide *
  * @param {Function} changeFn - The code, passed in through a funtion that you want to run when the "selector" is found - (e.g. function(){$("body > h1.header-image").html("New Header"); $("body > h1.header-image").css("color", "#0081ba");})
  * @param {Object} options - (optional) The elements you want to change and hide
- * @param {String} options.selectorToHide - (optional)  The element to hide until the delayed element is changed.
- * @param {Integer} options.timeoutInSeconds - (optional) Time in seconds this function will take to "timeout" or stop trying. If this argument is not specified, the interval will not timeout - (e.g. 2)
- * @param {Integer} options.unhideDelayInMilliseconds - (optional) Time in milliseconds before selectorToChange (or options.selectorToHide if provided) is unhidden - after changeFn runs. If this argument is not specified, the timeout is 0 - (e.g. 500)
- * @param {Integer} options.intervalInMilliseconds - (optional) Time in milliseconds between interval polls for "selector". If this argument is not specified, the interval poll will be set up 50 milliseconds - (e.g. 100)
- * @param {String} options.domMutationObserver - (optional) A boolean written as string (e.g. "false") If "false", recursive timeout polling will be used, overriding the default functionality. If not provided, the code will default to using DOM Mutation Observers if available in the browser and fallback on recursive timeout polling.
  * @param {Boolean} options.repeat - (optional) When set to true, this code will continue to modify new page elements that match the selectorToChange paramter. This works best for browsers that support DOM Mutation Observers, but can also work with the recursive timeout polling.
- * @param {String} options.customTagName - (optional) Will tag certain elements with this string for performance. If the repeat option is set to true, this will also be added to elements after changFn is ran on them, which prevents the code from being applied again. Only include alphanumeric characters, dashes and underscores in this string. If not provided, "optly-changed" will be used.
+ * @param {Integer} options.timeoutInSeconds - (optional) Time in seconds this function will take to "timeout" or stop trying. If this argument is not specified, the interval will not timeout - (e.g. 2)
+ * @param {String} options.selectorToHide - (optional)  The element to hide until the delayed element is changed.
+ * @param {Integer} options.unhideDelayInMilliseconds - (optional) Time in milliseconds before selectorToChange (or options.selectorToHide if provided) is unhidden - after changeFn runs. If this argument is not specified, the timeout is 0 - (e.g. 500)
+ * @param {Integer} options.pollingIntervalInMilliseconds - (optional) Time in milliseconds between interval polls for "selector" when using the recursive timeout polling option. If this argument is not specified, the interval poll will be set up 50 milliseconds - (e.g. 100)
+ * @param {String} options.method - (optional) If "POLL", recursive timeout polling will be used, overriding the default functionality. If not provided, the code will default to using DOM Mutation Observers if available in the browser and fallback on recursive timeout polling.
  *
- * IMPLEMENTATION INSTRUCTIONS: Add minified code below via these instructions. (via http://jscompress.com/)
+ * IMPLEMENTATION INSTRUCTIONS: Minify and add code below via this link and instructions. (via http://jscompress.com/)
  *
  * The minified code can either be added to Experiment JS or Project JS (for Enterprise subscriptions).
  * If you place it in Experiment JS, you must add the pollForDelayedContent() function definition within the "_optimizely_evaluate=force" comments
@@ -39,44 +40,42 @@
  */
 
 /**
- * UNMINIFIED CODE (WIP):
+ * UNMINIFIED CODE:
  */
 
 /* _optimizely_evaluate=force */
 var waitForDelayedContent = function(selectorToChange, changeFn, options) {
+  /* This function will stop all instances of waitForDelayedContent() */
+  window._waitForDelayedContent = {
+    stop : function() {
+      window._waitForDelayedContent.status = true;
+    },
+    stopped : false
+  }
   /* Default info */
   var START_TIME = (+new Date());
-  var DEFAULT_INTERVAL = 50;
-  options = options || {};
-  var customTagName = options.customTagName || "optly-changed";
-  var tagBuilder = function(tagName){
-    return ":not([" + tagName + "])";
-  }
-  var excludedTags = tagBuilder(customTagName);
+  var customTagName = "optlyTagged_" + START_TIME;
+  var excludedTags = ":not([" + customTagName + "])";
+  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+  /* Options configuration */
+  var options = options || {};
+  var repeat = options.repeat || null;
+  var timeout = options.timeoutInSeconds * 1000 || null;
   var selectorToChange = selectorToChange + excludedTags;
   var selectorToHide = options.selectorToHide || selectorToChange;
   var unhideDelay = options.unhideDelayInMilliseconds || 0;
-  var timeout = options.timeoutInSeconds * 1000 || null;
-  var repeat = options.repeat || null;
-  var domMutationObserver = options.domMutationObserver || "true";
-  var interval = options.intervalInMilliseconds || DEFAULT_INTERVAL;
-
-  // Replaces CSS Selecotrs with not attribute selectors and adds an atribute to replaceWith()
-  fixReplaceWith = "var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\.replaceWith\((["']<\w*)\W{0}/g, '$("$1").replaceWith($2 ' + customTagName);
-  eval(fixReplaceWith);
-  if(repeat) {
-    addTags = "var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\./g, '$("$1'+ excludedTags +'").');
-    eval(addTags);
-    // console.log(changeFn);
-  }
-
+  var interval = options.pollingIntervalInMilliseconds || 50;
+  var method = options.method || "DOM";
+  /* Adds an atribute to replaceWith(). If the repeat option is used, this modifies the CSS Selecotrs in changeFn() */
+  eval("var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\.replaceWith\((["']<\w*)\W{0}/g, '$("$1").replaceWith($2 ' + customTagName));
+  repeat ? eval("var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\./g, '$("$1'+ excludedTags +'").')) : null;
+  /* Function that hides original content and returns a function to unhide it */
   var hideContent = function(selector) {
     var selector = selector;
     var uniqueStyleID = "optlyHide_" + (+new Date());
     $("head").prepend("<style id='" + uniqueStyleID + "' type='text/css'>"+ selector + " {visibility:hidden !important;}</style>");
     return function() {
       $("#" + uniqueStyleID).remove();
-      // $(selector).removeAttr(customTagName);
     };
   }
   var unhideContent = hideContent(selectorToHide);
@@ -84,38 +83,40 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
     changeFn();
     setTimeout(unhideContent, unhideDelay);
   }
-
-  if((window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver) && domMutationObserver == "true") {
-    /* DOM MutationObserver */
-    console.log("DOM MutationObserver");
-    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+  /* DOM MutationObserver */
+  if(MutationObserver && method == "DOM") {
     var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if(typeof(mutation.addedNodes[0]) !== "undefined" && mutation.addedNodes[0] == $(selectorToChange)[0]) {
-                window.mutation = mutation;
-                if(repeat) {
-                  changeFn();
-                  $(selectorToHide).attr(customTagName, "");
-                } else if (timeout && now - START_TIME > timeout) {
-                  unhideContent();
-                  observer.disconnect();
-                } else {
-                  changeContent();
-                  observer.disconnect();
-                }
-            }
-        });
+      mutations.forEach(function(mutation) {
+        /* Override and timeout checker */
+        var now = (+new Date());
+        if (_waitForDelayedContent.stopped || timeout && now - START_TIME > timeout) {
+          observer.disconnect();
+          unhideContent();
+          $("*").removeAttr(customTagName)
+        }
+        if(typeof(mutation.addedNodes[0]) !== "undefined" && mutation.addedNodes[0] == $(selectorToChange)[0]) {
+          window.mutation = mutation;
+          /* If repeat option is set to true, observer will not be disconnected */
+          if(repeat) {
+            changeFn();
+            $(selectorToHide).attr(customTagName, "");
+          } else {
+            observer.disconnect();
+            changeContent();
+          }
+        }
+      });
     });
     observer.observe(document, {
       childList: true,
       subtree: true
     });
-  } else {
     /* Recursive Timeout */
-    console.log("Recursive Timeout");
+  } else {
     var pollForElement = function () {
       var now = (+new Date());
       if ($(selectorToChange).length) {
+        /* If repeat option is set to true, pollForElement() will be called again */
         if(repeat) {
           changeFn();
           $(selectorToHide).attr(customTagName, "");
@@ -123,8 +124,10 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
         } else {
           changeContent();
         }
-      } else if (timeout && now - START_TIME > timeout) {
+        /* Override and timeout checker */
+      } else if (_waitForDelayedContent.stopped || timeout && now - START_TIME > timeout) {
         unhideContent();
+        $("*").removeAttr(customTagName)
       } else {
         setTimeout(pollForElement, interval);
       }
@@ -134,17 +137,21 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
 }
 /* _optimizely_evaluate=safe */
 
-
 /**
  * DEBUG CODE FOR ADDING ELEMENTS TO PAGE ON DEMAND
  */
 
-$("body").dblclick(function(){
-  $("#a h2").after("<p class='test'>.text ORIGINAL</p>")
-});
-
-$("body").bind("keypress", function(){
-  $("#a h2").after("<p id='test'>#test ORIGINAL</p>")
+$(document).keydown(function(e) {
+  if(e.keyCode == 37) { // +
+      $("#a h2").after("<p class='test'>.text ORIGINAL</p>")
+  } else if(e.keyCode == 39) { // +
+      $("#a h2").after("<p id='test'>#test ORIGINAL</p>")
+  } else if(e.keyCode == 38) { // +
+    $(".test:eq(0)").html(".text Don't Change")
+    $("#b > h2").html("Don't Change")
+  } else if(e.keyCode == 40) { // +
+    $("#test").html("#text Don't Change")
+  }
 });
 
 /**
@@ -154,27 +161,24 @@ $("body").bind("keypress", function(){
 waitForDelayedContent(".test", function() {
   $(".test").html(".text CHANGED");
   $("body").css({"background":"#000"});
-  $("#b").replaceWith('<div id="b" class="block left"> <h2>Column B</h2> <a href="info.html"><img src="image.jpg" alt=""></a> </div>');
+  $("#b").replaceWith('<div id="b" class="block left"> <h2>Changed</h2> <a href="info.html"><img src="image.jpg" alt=""></a> </div>');
   $("#a > h2").html("TEST RUN")
-  console.warn("test");
 },{
   // selectorToHide: "body",
-  // timeoutInSeconds: 5,
+  timeoutInSeconds: 10,
   // unhideDelayInMilliseconds: 500,
-  // intervalInMilliseconds: 1,
-  // domMutationObserver: "false",
+  // pollingIntervalInMilliseconds: 1,
+  // method: "POLL",
   repeat: true,
-  // customTagName : "other-tag",
 });
 
 waitForDelayedContent("#test", function() {
   $("#test").html("#text CHANGED");
 },{
   // selectorToHide: "body",
-  // timeoutInSeconds: 5,
+  timeoutInSeconds: 10,
   // unhideDelayInMilliseconds: 500,
-  // intervalInMilliseconds: 1,
-  domMutationObserver: "false",
+  // pollingIntervalInMilliseconds: 1,
+  method: "POLL",
   repeat: true,
-  // customTagName : "other-tag",
 });
