@@ -138,7 +138,7 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
 /* _optimizely_evaluate=safe */
 
 /**
- * DEBUG CODE FOR ADDING ELEMENTS TO PAGE ON DEMAND
+ * DEBUG CODE FOR ADDING ELEMENTS TO PAGE ON DEMAND - The code below will work on http://www.derekehammond.com/public/jQuery-Experiments
  */
 
 $(document).keydown(function(e) {
