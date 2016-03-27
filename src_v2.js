@@ -5,6 +5,8 @@
   * 2. Given that intervalInMilliseconds is the one option that only applies to the polling version, I updated it to pollingIntervalInMilliseconds
   * - Any better option names than pollingIntervalInMilliseconds?
   * 3. Is it ok to use method in options.method? Wondering if it's a reserved word in JS
+  * 4. Given the widespread availability of DOM Mutation Observers, I wonder if the pollingIntervalInMilliseconds option is even needed
+  * - Thinking about if there are any other options we can clean up for simplicity
  */
 
 /**
@@ -33,6 +35,7 @@
  * GLOBAL ABANDON FUNCTION:
  *
  * When called, the _waitForDelayedContent.stop() function will stop all instances of the waitForDelayedContent() function.
+ * You can use _waitForDelayedContent.start() if you want to later use waitForDelayedContent().
  *
  * IMPLEMENTATION INSTRUCTIONS: Minify and add code below via this link and instructions. (via http://jscompress.com/)
  *
@@ -51,28 +54,30 @@
 var waitForDelayedContent = function(selectorToChange, changeFn, options) {
   /* This function will stop all instances of waitForDelayedContent() */
   window._waitForDelayedContent = {
-    stop : function() {
-      window._waitForDelayedContent.status = true;
+    start : function() {
+      window._waitForDelayedContent.running = true;
     },
-    stopped : false
+    stop : function() {
+      window._waitForDelayedContent.running = false;
+    },
+    running : true
   }
   /* Default info */
-  var START_TIME = (+new Date());
-  var customTagName = "optlyTagged_" + START_TIME;
-  var excludedTags = ":not([" + customTagName + "])";
+  var startTime = (+new Date());
+  var elementWasChanged = "optlyTagged_" + startTime;
   var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
   /* Options configuration */
   var options = options || {};
   var repeat = options.repeat || null;
   var timeout = options.timeoutInSeconds * 1000 || null;
-  var selectorToChange = selectorToChange + excludedTags;
+  var selectorToChange = selectorToChange + ":not([" + elementWasChanged + "])";
   var selectorToHide = options.selectorToHide || selectorToChange;
   var unhideDelay = options.unhideDelayInMilliseconds || 0;
   var interval = options.pollingIntervalInMilliseconds || 50;
   var method = options.method || "DOM";
   /* Adds an atribute to replaceWith(). If the repeat option is used, this modifies the CSS Selecotrs in changeFn() */
-  eval("var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\.replaceWith\((["']<\w*)\W{0}/g, '$("$1").replaceWith($2 ' + customTagName));
-  repeat ? eval("var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\./g, '$("$1'+ excludedTags +'").')) : null;
+  eval("var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\.replaceWith\((["']<\w*)\W{0}/g, '$("$1").replaceWith($2 ' + elementWasChanged));
+  repeat ? eval("var changeFn = " + changeFn.toString().replace(/\$\(["'](.*)["']\)\./g, '$("$1'+ ":not([" + elementWasChanged + "])" +'").')) : null;
   /* Function that hides original content and returns a function to unhide it */
   var hideContent = function(selector) {
     var selector = selector;
@@ -88,22 +93,22 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
     setTimeout(unhideContent, unhideDelay);
   }
   /* DOM MutationObserver */
-  if(MutationObserver && method == "DOM") {
+  if(MutationObserver && method !== "POLL") {
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         /* Override and timeout checker */
         var now = (+new Date());
-        if (_waitForDelayedContent.stopped || timeout && now - START_TIME > timeout) {
+        if (!_waitForDelayedContent.running || timeout && now - startTime > timeout) {
           observer.disconnect();
           unhideContent();
-          $("*").removeAttr(customTagName)
+          $("*").removeAttr(elementWasChanged)
         }
         if(typeof(mutation.addedNodes[0]) !== "undefined" && mutation.addedNodes[0] == $(selectorToChange)[0]) {
           window.mutation = mutation;
           /* If repeat option is set to true, observer will not be disconnected */
           if(repeat) {
             changeFn();
-            $(selectorToHide).attr(customTagName, "");
+            $(selectorToHide).attr(elementWasChanged, "");
           } else {
             observer.disconnect();
             changeContent();
@@ -115,7 +120,7 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
       childList: true,
       subtree: true
     });
-    /* Recursive Timeout */
+  /* Recursive Timeout */
   } else {
     var pollForElement = function () {
       var now = (+new Date());
@@ -123,15 +128,15 @@ var waitForDelayedContent = function(selectorToChange, changeFn, options) {
         /* If repeat option is set to true, pollForElement() will be called again */
         if(repeat) {
           changeFn();
-          $(selectorToHide).attr(customTagName, "");
+          $(selectorToHide).attr(elementWasChanged, "");
           setTimeout(pollForElement, interval);
         } else {
           changeContent();
         }
-        /* Override and timeout checker */
-      } else if (_waitForDelayedContent.stopped || timeout && now - START_TIME > timeout) {
+      /* Override and timeout checker */
+      } else if (!_waitForDelayedContent.running || timeout && now - startTime > timeout) {
         unhideContent();
-        $("*").removeAttr(customTagName)
+        $("*").removeAttr(elementWasChanged)
       } else {
         setTimeout(pollForElement, interval);
       }
@@ -169,7 +174,7 @@ waitForDelayedContent(".test", function() {
   $("#a > h2").html("TEST RUN")
 },{
   // selectorToHide: "body",
-  timeoutInSeconds: 10,
+  // timeoutInSeconds: 10,
   // unhideDelayInMilliseconds: 500,
   // pollingIntervalInMilliseconds: 1,
   // method: "POLL",
@@ -180,7 +185,7 @@ waitForDelayedContent("#test", function() {
   $("#test").html("#text CHANGED");
 },{
   // selectorToHide: "body",
-  timeoutInSeconds: 10,
+  // timeoutInSeconds: 10,
   // unhideDelayInMilliseconds: 500,
   // pollingIntervalInMilliseconds: 1,
   method: "POLL",
