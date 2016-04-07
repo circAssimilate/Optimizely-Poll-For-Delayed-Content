@@ -10,6 +10,7 @@
   * 4. Given the widespread availability of DOM Mutation Observers, I wonder if the pollingIntervalInMilliseconds option is even needed
   * - Thinking about if there are any other options we can clean up for simplicity
   * 5. Don't use Eval(), use new Function() instead
+  * 6. Consider any cons of using Optimizely Utils from here: https://gist.github.com/circAssimilate/8e84fc0e87edef9b39e3
   *
   *
   * DOM MUTATION OBSERVERS vs RECURSIVE TIMEOUT POLLING:
