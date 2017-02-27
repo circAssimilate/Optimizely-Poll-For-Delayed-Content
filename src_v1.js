@@ -54,7 +54,7 @@
  * Optiverse info on "_optimizely_evaluate=force" comments - https://help.optimizely.com/hc/en-us/articles/200040185-Force-variation-code-or-Experiment-JavaScript-to-execute-immediately-when-Optimizely-loads
  */
 
- /* pollForDelayedContent function v1.1.0 */
+/* pollForDelayedContent function v1.1.0 */
 /* _optimizely_evaluate=force */
 window.pollForDelayedContent=function(a,b,c){var d=+new Date,e=50;c=c||{};var f=c.selectorToHide||a,g=c.unhideDelayInMilliseconds||0,h=1e3*c.timeoutInSeconds||null,i=c.intervalInMilliseconds||e,j=function(a){var b="optlyHide_"+ +new Date;return $("head").prepend("<style id='"+b+"' type='text/css'>"+a+" {visibility:hidden !important;}</style>"),function(){$("#"+b).remove()}},k=j(f),l=function(){b(),setTimeout(k,g)},m=function(){var b=+new Date;$(a).length>=a.split(",").length?l():h&&b-d>h?k():setTimeout(m,i)};m()};
 /* _optimizely_evaluate=safe */
