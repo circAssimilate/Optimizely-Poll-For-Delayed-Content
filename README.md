@@ -4,7 +4,7 @@ The pollForDelayedContent() is a simple, efficient way to wait for dynamic conte
 
 These methods can be used as many times as they are needed within an experiment or variation. When the Optimizely snippet is implemented correctly, it should provide a way to eliminate all content flashing.
 The function allows for a an "options" element, to allow for more flexibility as well.
-While *Optimizely does not officially support or maintain this custom code*, feel free to file a ticket at optimizely.com/support with any feedback or questions.
+While **Optimizely does not officially support or maintain this custom code**, feel free to file a ticket at optimizely.com/support with any feedback or questions.
 
 ###CONTRIBUTING TO THIS REPOSITORY:
 When contributing and changing the core code, please update this Readme, the compressed code and "UNCOMPRESSED CODE" sections. You can compress via http://jscompress.com/ and replace the minified code.
@@ -18,10 +18,13 @@ Add minified code below via these instructions.
 - The window.pollForDelayedContent() function in the "< edit code >" section must also be wrapped in the `_optimizely_evaluate=force` comments
 - [Optiverse info](https://help.optimizely.com/hc/en-us/articles/200040185-Force-variation-code-or-Experiment-JavaScript-to-execute-immediately-when-Optimizely-loads) on `_optimizely_evaluate=force` comments.
 
-##V1 CODE ([src_v1.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v1.js)):
+##V1 CODE:
 This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added. This code is in the process of being revamped as polling is less performant that DOM Mutation Observers.
 
-###COMPRESSED V1 CODE:
+###UNCOMPRESSED CODE:
+View *src_v1.js* for this.
+
+###COMPRESSED CODE:
 ```
 /* pollForDelayedContent function v1.1.0 */
 /* _optimizely_evaluate=force */
@@ -69,10 +72,15 @@ window.pollForDelayedContent("body > h1.header-image", function() {
 @param {Integer} options.intervalInMilliseconds - (optional) Time in milliseconds between interval polls for "selector". If this argument is not specified, the interval poll will be set up 50 milliseconds - (e.g. 100)
 ```
 
-##V2 CODE ([src_v2.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v2.js)):
+##V2 CODE
 By default, the code below will detect whether or not the browser allows for DOM Mutation Observers, and use that performance efficient way to hide and change page elements.
 If DOM Mutation Observers aren't available, the code will fallback to recursive timeout polling. This is less performant and uses a recursive JavaScript setTimeout().
 
+###UNCOMPRESSED CODE:
+View *src_v2.js* for this.
+
+###COMPRESSED CODE:
+View *src_v2.js* for this.
 
 ###V2 PARAMETER CONTEXT:
 ```
