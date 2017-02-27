@@ -21,7 +21,7 @@ Add minified code below via these instructions.
 ##V1 CODE ([src_v1.js](https://github.com/circAssimilate/Optimizely-Poll-For-Delayed-Content/blob/master/src_v1.js)):
 This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added. This code is in the process of being revamped as polling is less performant that DOM Mutation Observers.
 
-####COMPRESSED V1 CODE:
+###COMPRESSED V1 CODE:
 ```
 /* pollForDelayedContent function v1.1.0 */
 /* _optimizely_evaluate=force */
