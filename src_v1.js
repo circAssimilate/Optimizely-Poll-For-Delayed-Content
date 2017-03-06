@@ -1,5 +1,5 @@
 /**
- * V1 CODE:
+ * V1.1.0 CODE:
  *
  * This code uses CSS stylesheets to hide elements before they are added to the page and recursive timeout polling to detect, change and unhide elements after they are added.
  * This code is in the process of being revamped as polling is less performant that DOM Mutation Observers.
@@ -54,14 +54,16 @@
  * Optiverse info on "_optimizely_evaluate=force" comments - https://help.optimizely.com/hc/en-us/articles/200040185-Force-variation-code-or-Experiment-JavaScript-to-execute-immediately-when-Optimizely-loads
  */
 
+/* pollForDelayedContent function v1.1.0 */
 /* _optimizely_evaluate=force */
-window.pollForDelayedContent=function(e,n,t){var i=+new Date,o=50;t=t||{};var l=t.selectorToHide||e,d=t.unhideDelayInMilliseconds||0,s=1e3*t.timeoutInSeconds||null,a=t.intervalInMilliseconds||o,r=function(e){var n="optlyHide_"+ +new Date;return $("head").prepend("<style id='"+n+"' type='text/css'>"+e+" {visibility:hidden !important;}</style>"),function(){$("#"+n).remove()}},u=r(l),c=function(){n(),setTimeout(u,d)},v=function(){var n=+new Date;$(e).length?c():s&&n-i>s?u():setTimeout(v,a)};v()};
+window.pollForDelayedContent=function(a,b,c){var d=+new Date,e=50;c=c||{};var f=c.selectorToHide||a,g=c.unhideDelayInMilliseconds||0,h=1e3*c.timeoutInSeconds||null,i=c.intervalInMilliseconds||e,j=function(a){var b="optlyHide_"+ +new Date;return $("head").prepend("<style id='"+b+"' type='text/css'>"+a+" {visibility:hidden !important;}</style>"),function(){$("#"+b).remove()}},k=j(f),l=function(){b(),setTimeout(k,g)},m=function(){var b=+new Date;$(a).length>=a.split(",").length?l():h&&b-d>h?k():setTimeout(m,i)};m()};
 /* _optimizely_evaluate=safe */
 
 /*
  * UNCOMPRESSED CODE - Using the minified code is recommended; but, please add via the instructions above.
  */
 
+/* pollForDelayedContent function v1.1.0 */
 /* _optimizely_evaluate=force */
 window.pollForDelayedContent = function(selectorToChange, changeFn, options) {
   /* Default info for polling */
@@ -84,9 +86,10 @@ window.pollForDelayedContent = function(selectorToChange, changeFn, options) {
     changeFn();
     setTimeout(unhideContent, unhideDelay);
   }
+
   var pollForElement = function () {
     var now = (+new Date());
-    if ($(selectorToChange).length) {
+    if ($(selectorToChange).length >= selectorToChange.split(',').length) {
       changeContent();
     } else if (timeout && now - START_TIME > timeout) {
       unhideContent();
